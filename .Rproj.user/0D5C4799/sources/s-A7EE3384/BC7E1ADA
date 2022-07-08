@@ -1,0 +1,27 @@
+{
+    "id": "BC7E1ADA",
+    "path": "~/PROGRAMMING/TMDD/modules/mod-plot.R",
+    "project_path": "modules/mod-plot.R",
+    "type": "r_source",
+    "hash": "2367838366",
+    "contents": "",
+    "dirty": false,
+    "created": 1657231917124.0,
+    "source_on_save": false,
+    "relative_order": 4,
+    "properties": {
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "33,1",
+        "scrollLine": "3"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1657233957,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1657233957807,
+    "read_only": false,
+    "read_only_alternatives": []
+}
