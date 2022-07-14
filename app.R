@@ -6,7 +6,7 @@
 ## Makes sure packages are installed
 list.of.packages <-
   c('base', "survival", 'mstate', 'diagram', "shiny", 'shinyjs',
-    'colourpicker', 'xtable',  'shinyBS', 'mrgsolve', 'shinydashboard')
+    'colourpicker', 'xtable',  'shinyBS', 'mrgsolve', 'shinydashboard', 'shinycssloaders', 'plotly')
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages, repos='http://cran.us.r-project.org')
 
@@ -20,6 +20,9 @@ library(diagram)
 library(shinyBS)
 library(mrgsolve)
 library(shinydashboard)
+library(shinycssloaders)
+library(plotly)
+library(markdown)
 
 remove(list = objects())
 
