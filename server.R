@@ -20,6 +20,9 @@ library(shinyBS)
 library(mrgsolve)
 library(shinydashboard)
 
+mod_qe <- mread_cache("analyses/TMDD_QE_2cmt_pop")
+mod_full <- mread_cache("analyses/Full_TMDD_2cmt_pop")
+
 server <- function(input, output, session) {
   
   output$qeUI <- renderUI({

@@ -7,7 +7,7 @@
 list.of.packages <-
   c('base', "survival", 'mstate', 'diagram', "shiny", 'shinyjs',
     'colourpicker', 'xtable',  'shinyBS', 'mrgsolve', 'shinydashboard')
-# new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages, repos='http://cran.us.r-project.org')
 
 library(shiny)
