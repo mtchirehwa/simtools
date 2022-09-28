@@ -2,6 +2,7 @@
 library(shinycssloaders)
 library(plotly)
 library(markdown)
+library(shinydashboard)
 shinyUI(
   shinydashboard::dashboardPage(title = "ShinyAB",
                 #dashboardHeader(title = logo_grey_light, titleWidth = 200),

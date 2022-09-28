@@ -59,15 +59,33 @@ shinyServer(function(input, output, session){
   
   # Add input to dataframe
   ## Init with some example data
-  data <- reactiveVal(dummyInp)
+  data <- reactiveValues()
+  
+  data$pkteparams <- tibble(TVCL = numeric(),
+                     TVV1 = numeric(),
+                     TVQ1 = numeric(),
+                     TVV2 = numeric(),
+                     TVKA = numeric(),
+                     TVF1 = numeric(),
+                     TVBASE = numeric(),
+                     TVKDEG = numeric(),
+                     TVKINT = numeric(),
+                     TVKD = numeric(),
+                     MWmAb = numeric(),
+                     MWtarget = numeric(),
+                     Dose = numeric(),
+                     II = numeric(),
+                     ADDL = numeric(),
+                     Sim_start = numeric(),
+                     Sim_stop = numeric(),
+                     Sim_step = numeric()
+  )
   
   observeEvent(
     input$add_btn,
     {
       #start with current data
-      data() %>%
-        filter_all(., any_vars(. != 0)) %>% 
-        add_row(
+      tmp_pkteparams <-  tibble(
           `TVCL` = isolate(input$TVCL),
           TVV1 = isolate(input$TVV1),
           `TVQ1` = isolate(input$TVQ1),
@@ -86,9 +104,9 @@ shinyServer(function(input, output, session){
           Sim_start = isolate(input$Sim_start),
           Sim_stop = isolate(input$Sim_stop),
           Sim_step = isolate(input$Sim_step)
-        ) %>%
+        )
         # update data value
-        data() 
+      data$pkteparams <- data$pkteparams %>%  bind_rows(tmp_pkteparams)
 
     }
   )
@@ -96,13 +114,14 @@ shinyServer(function(input, output, session){
   observeEvent(input$deletePressed, {
     rowNum <- parseDeleteEvent(input$deletePressed)
     # Delete the row from the data frame
-    data() %>%  filter(row_number() != rowNum) %>% data()
+    #(data$pkteparams %>%  filter(row_number() != rowNum)) %>%  flatten_dbl %>% data$pkteparams
+    data$pkteparams <- data$pkteparams[-rowNum,]
   })
 
   output$TBL1 <- renderDataTable(
     # datatable(data()) ## old code
     # Add the delete button column
-    deleteButtonColumn(data() , 'delete_button')
+    deleteButtonColumn(data$pkteparams , 'delete_button')
 
   )
 
