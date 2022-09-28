@@ -1,0 +1,101 @@
+# This app shows a simple module based app
+
+library(shiny)
+library(ggplot2)
+
+plot_UI <- function(id) {
+  ns <- NS(id)
+  
+  div(
+    id = id,
+    selectInput(
+      inputId = ns("selected_col"),
+      label = "selected column",
+      choices = colnames(mtcars)
+    ),
+    numericInput('TVCL', 
+                 'TVCL', 
+                 0.2),
+    numericInput('TVV', 
+                 'TVV', 
+                 0.2),
+    plotOutput(
+      outputId = ns("plot")
+    ),
+    dataTableOutput("TBL1")
+  )
+}
+
+plot_server <- function(id) {
+  moduleServer(
+    id,
+    function(input, output, session) {
+      output$plot <- renderPlot({
+        ggplot(mtcars, aes(x = .data[[input$selected_col]], y = mpg)) +
+          geom_point()
+      })
+    }
+  )
+}
+
+ui <- fluidPage(
+  actionButton(
+    inputId = "add_module",
+    label = "Add a module"
+  ),
+  actionButton(
+    inputId = "remove_module",
+    label = "Remove a module"
+  ),
+  div(
+    id = "add_here"
+  )
+)
+
+server <- function(input, output, session) {
+  
+  active_modules <- reactiveVal(value = NULL)
+  
+
+  data1 <- reactiveValues()
+  data1$df <-  tibble(TVCL = numeric(),
+                      TVV1 = numeric(),
+                      
+  )
+  
+  observeEvent(input$add_module, {
+    current_id <- paste0("id_", input$add_module)
+    active_modules(c(current_id, active_modules()))
+    
+    tmp <-  tibble(TVCL = 13,  TVV1 =2)
+    data1$df <- data1$df %>%  bind_rows(tmp)
+    
+    plot_server(
+      id = current_id
+    )
+    
+    
+    insertUI(
+      selector = "#add_here",
+      ui = plot_UI(id = current_id)
+    )
+  }
+  )
+  
+  
+  
+  observeEvent(input$remove_module, {
+    if (length(active_modules())>0){
+      current_id <- active_modules()[1]  # first element
+    removeUI(
+      selector = paste0("#", current_id)
+    )
+    active_modules(active_modules()[-1])
+    }
+    
+  })
+  
+ output$TBL1<- renderDataTable(data1$df)
+}
+
+shinyApp(ui, server)
