@@ -3,6 +3,7 @@ library(shinycssloaders)
 library(plotly)
 library(markdown)
 library(shinydashboard)
+library(DT)
 shinyUI(
   shinydashboard::dashboardPage(title = "ShinyAB",
                 #dashboardHeader(title = logo_grey_light, titleWidth = 200),
@@ -50,7 +51,7 @@ shinyUI(
                                            )
                                     ),
                                     column(3, 
-                                           p(HTML("<b>Bio (prop)</b>"),span(shiny::icon("info-circle"), id = "info_F1"),numericInput('TVF1', NULL, 2),
+                                           p(HTML("<b>Bio (prop)</b>"),span(shiny::icon("info-circle"), id = "info_F1"),numericInput('TVF1', NULL, 0.74),
                                              tippy::tippy_this(elementId = "info_F1",tooltip = "Bioavailability [0-1]",placement = "right")
                                            )
                                     )
@@ -146,10 +147,13 @@ shinyUI(
                                 title = "", width = 12,
                                 id = "tabset1",
                                 tabPanel(HTML("<b>Simulation inputs</b>"),
-                                         dataTableOutput("TBL1")),
-                                fluidRow(
-                                  column(4, actionButton("run_simulation", "Start simulation"))
-                                )
+                                         div(style = 'overflow-x: scroll',DT::dataTableOutput("TBL1",width = "100%")),
+                                         fluidRow(
+                                           column(4, actionButton("run_simulation", "Start simulation"))
+                                         )),
+                                tabPanel(HTML("<b>Simulated data</b>"),
+                                         div(style = 'overflow-x: scroll',DT::dataTableOutput("simdata",width = "100%"))
+                                         )
                               ),
                               tabBox(
                                 title = HTML("<b>Plots</b>"), width = 6,

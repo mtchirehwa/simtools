@@ -26,33 +26,13 @@ library(shinydashboard)
 library(shinycssloaders)
 library(plotly)
 library(markdown)
+library(DT)
 #library(shinydashboardPlus)
 library(DT)
 library(tibble)
 
 mod_qe <- mread_cache("analyses/TMDD_QE_2cmt_pop")
 mod_full <- mread_cache("analyses/Full_TMDD_2cmt_pop")
-
-# Dummy tibble to initialize the dataframe of parameters
-dummyInp <- tibble(TVCL = 0,
-                   TVV1 = 0,
-                   TVQ1 = 0,
-                   TVV2 = 0,
-                   TVKA = 0,
-                   TVF1 = 0,
-                   TVBASE = 0,
-                   TVKDEG = 0,
-                   TVKINT = 0,
-                   TVKD = 0,
-                   MWmAb = 0,
-                   MWtarget = 0,
-                   Dose = 0,
-                   II = 0,
-                   ADDL = 0,
-                   Sim_start = 0,
-                   Sim_stop = 0,
-                   Sim_step = 0
-                   )
 
 shinyServer(function(input, output, session){
   print("Initialize Start")
@@ -111,18 +91,45 @@ shinyServer(function(input, output, session){
     }
   )
   
+  # deleting a input design
   observeEvent(input$deletePressed, {
     rowNum <- parseDeleteEvent(input$deletePressed)
     # Delete the row from the data frame
-    #(data$pkteparams %>%  filter(row_number() != rowNum)) %>%  flatten_dbl %>% data$pkteparams
     data$pkteparams <- data$pkteparams[-rowNum,]
   })
+  
+  # run simulation
+  observeEvent(
+    input$run_simulation, {
+      data$simout <- do.call(rbind, 
+                        lapply(1:nrow(data$pkteparams), 
+                               function(x){
+                                 tempdata <- data$pkteparams[x,] %>% 
+                                   mutate(ID = 1) %>% 
+                                   rename(amt = Dose,
+                                          ii = II,
+                                          addl = ADDL)
+                                 mod_qe %>% 
+                                   idata_set(tempdata) %>% 
+                                   ev(amt=tempdata$amt) %>% 
+                                   mrgsim(end = 20,
+                                          delta = 0.1, 
+                                          obsonly = T) %>% 
+                                   as_tibble()
+                               }))
+    }
+  )
+    
 
   output$TBL1 <- renderDataTable(
-    # datatable(data()) ## old code
     # Add the delete button column
     deleteButtonColumn(data$pkteparams , 'delete_button')
 
+  )
+  
+  output$simdata <- renderDataTable({
+    datatable(head(data$simout),options = list(paging = FALSE))
+    }
   )
 
   
