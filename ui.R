@@ -146,7 +146,10 @@ shinyUI(
                                 title = "", width = 12,
                                 id = "tabset1",
                                 tabPanel(HTML("<b>Simulation inputs</b>"),
-                                         dataTableOutput("TBL1"))
+                                         dataTableOutput("TBL1")),
+                                fluidRow(
+                                  column(4, actionButton("run_simulation", "Start simulation"))
+                                )
                               ),
                               tabBox(
                                 title = HTML("<b>Plots</b>"), width = 6,
