@@ -158,14 +158,16 @@ shinyUI(
                               tabBox(
                                 title = HTML("<b>Plots</b>"), width = 6,
                                 id = "tabset2",
-                                tabPanel("Compound"),
+                                tabPanel("Compound",
+                                         div(shiny::plotOutput('plot_mAb',width = "100%"))),
                                 tabPanel("Complex"),
                                 tabPanel("Target Engagement"),
                                 tabPanel("Target")
                               ),
                               tabBox(title = HTML("<b>Summaries</b>"), width = 6, 
                                      id = "tabset3",
-                                     tabPanel("Compound"),
+                                     tabPanel("Compound",
+                                              div(DT::dataTableOutput("summary_mAb",width = "100%"))),
                                      tabPanel("Complex"),
                                      tabPanel("Target Engagement"),
                                      tabPanel("Target")

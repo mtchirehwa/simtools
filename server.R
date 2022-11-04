@@ -111,12 +111,15 @@ shinyServer(function(input, output, session){
                                           addl = ADDL)
                                  mod_qe %>% 
                                    idata_set(tempdata) %>% 
-                                   ev(amt=tempdata$amt) %>% 
+                                   ev(amt=tempdata$amt,
+                                      ii = tempdata$ii,
+                                      addl = tempdata$addl) %>% 
                                    mrgsim(end = tempdata$Sim_stop,
                                           delta = tempdata$Sim_step, 
                                           start = tempdata$Sim_start,
                                           obsonly = T) %>% 
-                                   as_tibble()
+                                   as_tibble() %>% 
+                                   mutate(GROUP = x)
                                }))
       showNotification("Simulation step completed!!", closeButton = TRUE, type = 'message')
     }
@@ -133,6 +136,29 @@ shinyServer(function(input, output, session){
     datatable(head(data$simout),options = list(paging = FALSE))
     }
   )
+  
+  observeEvent(
+    input$run_simulation, {
+  output$summary_mAb <- renderDataTable({
+    data$simout %>% group_by(GROUP) %>%  summarise(Cmax = max(CTOTngmL))
+  })
+    }
+  )
+  
+  observeEvent(
+    input$run_simulation, {
+  output$plot_mAb <- renderPlot({
+    data$simout %>% 
+      ggplot(aes(x = time, y = CTOTngmL, group = GROUP, colour = factor(GROUP))) +
+      geom_line() +
+      theme_bw() +
+      labs(y = 'mAb concentration (ng/mL)',
+           x = 'Time (days)',
+           colour = '') +
+      theme(legend.position = 'bottom')
+  })
+    }
+)
 
   
 })
