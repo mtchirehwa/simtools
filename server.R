@@ -112,11 +112,13 @@ shinyServer(function(input, output, session){
                                  mod_qe %>% 
                                    idata_set(tempdata) %>% 
                                    ev(amt=tempdata$amt) %>% 
-                                   mrgsim(end = 20,
-                                          delta = 0.1, 
+                                   mrgsim(end = tempdata$Sim_stop,
+                                          delta = tempdata$Sim_step, 
+                                          start = tempdata$Sim_start,
                                           obsonly = T) %>% 
                                    as_tibble()
                                }))
+      showNotification("Simulation step completed!!", closeButton = TRUE, type = 'message')
     }
   )
     
