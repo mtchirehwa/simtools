@@ -58,7 +58,8 @@ shinyUI(
                                   ),
                                   uiOutput("ui_test_method_parameter"),
                                   fluidRow(
-                                    column(4, actionButton("add_btn", "Add Record"))
+                                    column(4, actionButton("add_btn", "Add Record")),
+                                    column(4, actionButton("edit_btn", "Edit Record"))
                                   )     
                               ),
                               box(title = "TE Parameters", width = 4, solidHeader = T, status = "primary", 

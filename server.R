@@ -30,6 +30,7 @@ library(DT)
 #library(shinydashboardPlus)
 library(DT)
 library(tibble)
+library(purrr)
 
 mod_qe <- mread_cache("analyses/TMDD_QE_2cmt_pop")
 mod_full <- mread_cache("analyses/Full_TMDD_2cmt_pop")
@@ -91,11 +92,53 @@ shinyServer(function(input, output, session){
     }
   )
   
+  # Updating ui for scenarios when a datatable row is selected
+  shiny::observe({
+    if (!is.null(input$TBL1_rows_selected)) {
+      "remember the row selected"
+      row_sel <- input$TBL1_rows_selected
+      mydata <- data$pkteparams[row_sel, ]
+    shiny::updateNumericInput(session, "TVCL",  value = mydata$TVCL)
+    shiny::updateNumericInput(session, "TVV1",  value = mydata$TVV1)
+    shiny::updateNumericInput(session, "TVQ1",  value = mydata$TVQ1)
+    shiny::updateNumericInput(session, "TVV2",  value = mydata$TVV2)
+    shiny::updateNumericInput(session, "TVKA",  value = mydata$TVKA)
+    shiny::updateNumericInput(session, "TVF1",  value = mydata$TVF1)
+    shiny::updateNumericInput(session, "TVBASE",  value = mydata$TVBASE)
+    shiny::updateNumericInput(session, "TVKDEG",  value = mydata$TVKDEG)
+    shiny::updateNumericInput(session, "TVKINT",  value = mydata$TVKINT)
+    shiny::updateNumericInput(session, "TVKD",  value = mydata$TVKD)
+    shiny::updateNumericInput(session, "MWmAb",  value = mydata$MWmAb)
+    shiny::updateNumericInput(session, "MWtarget",  value = mydata$MWtarget)
+    shiny::updateNumericInput(session, "Dose",  value = mydata$Dose)
+    shiny::updateNumericInput(session, "II",  value = mydata$II)
+    shiny::updateNumericInput(session, "ADDL",  value = mydata$ADDL)
+    shiny::updateNumericInput(session, "Sim_start",  value = mydata$Sim_start)
+    shiny::updateNumericInput(session, "Sim_stop",  value = mydata$Sim_stop)
+    shiny::updateNumericInput(session, "Sim_step",  value = mydata$Sim_step)
+    }
+  })
+  
   # deleting a input design
   observeEvent(input$deletePressed, {
     rowNum <- parseDeleteEvent(input$deletePressed)
     # Delete the row from the data frame
     data$pkteparams <- data$pkteparams[-rowNum,]
+  })
+  
+  # editing a record
+  observeEvent(input$edit_btn,{
+    
+    if (!is.null(input$TBL1_rows_selected)) {
+      cols_to_edit <- names(data$pkteparams)
+      colnms <- names(data$pkteparams)
+      "remember the row selected"
+     data$row_selected <- input$TBL1_rows_selected
+      
+      walk2(cols_to_edit, colnms, ~{data$pkteparams[input$TBL1_rows_selected, ..2] <<- input[[..1]]}) 
+      
+    }
+    
   })
   
   # run simulation
@@ -125,6 +168,7 @@ shinyServer(function(input, output, session){
     }
   )
     
+  
 
   output$TBL1 <- renderDataTable(
     # Add the delete button column
